@@ -36,7 +36,7 @@ class Quiz(Tk):
 
     def ClearScreen(self):
         for widget in self.winfo_children():
-            if widget not in (self.home_button, self.help_button, self.user_label, self.logout_button, self.userscore):  # only destroys widgets that are not supposed to be displayed at all times
+            if widget not in (self.home_button, self.help_button, self.user_label, self.logout_button, self.user_score_label):  # only destroys widgets that are not supposed to be displayed at all times
                 widget.destroy()
         return
 
@@ -120,6 +120,8 @@ class Quiz(Tk):
         if self.username:
             self.username = ""
             self.user_label.config(text="User: Not logged in")
+            self.userscore = 0
+            self.cqi = 0
             self.HomeScreen()
     
     def RegisterScreen(self):
@@ -176,6 +178,7 @@ class Quiz(Tk):
         cursor.execute("SELECT title, a, b, c, d FROM PublicQuestions")
         questions = cursor.fetchall()
         conn.close()
+        print(questions)  # TODO: reads the whole db twice!!!
         return questions
 
     def show_question_details(self):
@@ -186,24 +189,31 @@ class Quiz(Tk):
             self.q_btn_list[1].config(text=b)
             self.q_btn_list[2].config(text=c)
             self.q_btn_list[3].config(text=d)
-
-
-        else:
+        elif self.cqi + 1 == len(self.questions):
             self.finish_quiz()
 
     def finish_quiz(self):
-        self.TitleLabel.config(text="Quiz Completed!")
+        self.NextButton.pack_forget()
+        self.TitleLabel.config(text="Congratulations, you... finished?!")
         for btn in self.q_btn_list:
             btn.pack_forget()
-        self.ScoreLabel.config(text=f"Final Score: {self.userscore}")
+        if self.userscore >= 0 and self.userscore < 6:
+            self.ScoreLabel.config(text=f"Final Score: {self.userscore}... meh")
+        elif self.userscore >= 6 and self.userscore < 10:
+            self.ScoreLabel.config(text=f"Final Score: {self.userscore}... not great, not terrible")
+        else:
+            self.ScoreLabel.config(text=f"Final Score: {self.userscore}... WOW O_O, you are well-informed")
+
+        self.cqi = 0
+        # TODO: add userscore to user details in db
 
     def check_answer_correctness(self):
         pass
 
     def next_question_jump(self):
-        if self.cqi < len(self.questions):
+        if self.cqi < len(self.questions) -1:
             self.cqi += 1
-            self.Questions()
+            self.show_question_details()
         else:
             self.finish_quiz()
 
@@ -224,8 +234,8 @@ class Quiz(Tk):
         self.ScoreLabel = Label(QuestionFrame, text=f"Score: ", font="Verdana 12 italic")
         self.ScoreLabel.pack(pady=20)
 
-        NextButton = Button(QuestionFrame, text="Another One", command=self.next_question_jump)
-        NextButton.pack(pady=10)
+        self.NextButton = Button(QuestionFrame, text="Another One", command=self.next_question_jump)
+        self.NextButton.pack(pady=10)
 
         self.show_question_details()
 
