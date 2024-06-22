@@ -2,20 +2,22 @@ from tkinter import *
 from PIL import Image, ImageTk
 
 
-def createTxtlabel(root, txt):
-    return Label(root, text=txt, font="Verdana 12 bold")
-
-# def createImglabel(master, loc):
-#     return Label(master, image=loc)
+# def createTxtlabel(root, txt):
+#     return Label(root, text=txt, font="Verdana 12 bold")
+#
+# # def createImglabel(master, loc):
+# #     return Label(master, image=loc)
 
 
 class Quiz(Tk):
     def __init__(self):
         super().__init__()
+        self.difficulty = "intermediate"  # for later purpose of diff level
         self.title("UnoVia")
         self.iconbitmap("assets/checkbox.ico")
         self.window_width = 800
         self.window_height = 600
+        self.configure(bg='#fff2e6')  # Set the background color
 
         # The grid weights allow columns to expand, so we set them
         for i in range(5):
@@ -40,8 +42,7 @@ class Quiz(Tk):
 
     def HomeScreen(self):
         self.ClearScreen()
-        welcome_label = createTxtlabel(self, "UnoVia")
-
+        welcome_label = Label(self, text="UnoVia", bg="#fff2e6", font="Verdana 12 bold")
         welcome_label.grid(column=2, row=0)
 
         self.photo1 = ImageTk.PhotoImage(Image.open("assets/quiz_welcome.jpg"))
@@ -62,7 +63,7 @@ class Quiz(Tk):
         # Configure the grid within the frame to have a single centered column
         frame_buttons.grid_columnconfigure(0, weight=1)
 
-        play_button = Button(frame_buttons, text="PLAY", font="Verdana 12 bold", command=self.HardnessScreen)
+        play_button = Button(frame_buttons, text="PLAY", font="Verdana 12 bold", command=self.DiffScreen)
         play_button.grid(column=0, row=0, pady=10)
         new_button = Button(frame_buttons, text="CREATE", font="Verdana 12 bold", command=self.UniqueQuestionScreen)
         new_button.grid(column=0, row=1, pady=10)
@@ -97,17 +98,48 @@ class Quiz(Tk):
         ''', font="Verdana 10")
         descr.pack(padx=10, pady=10)
 
-    def HardnessScreen(self):
+    def DiffScreen(self):
         self.ClearScreen()
-        easy_button = Button()
-        easy_button.pack()
-        medium_button = Button()
-        medium_button.pack()
-        hard_button = Button()
-        hard_button.pack()
+        choose_diff_lab = LabelFrame(self, text="Choose difficulty", cursor="exchange", background="lightpink",
+                                     font="Verdana 12 bold")
+        choose_diff_lab.grid(column=2, row=2, padx=10, pady=10, ipadx=40, ipady=30, sticky="nsew")
+        easy_button = Button(choose_diff_lab, text="Easy", font="Verdana 14 bold", bd=5, fg="#006600")
+        easy_button.pack(pady=20)
+        medium_button = Button(choose_diff_lab, text="Intermediate", font="Verdana 14 bold", bd=5, fg="#0066cc")
+        medium_button.pack(pady=10)
+        hard_button = Button(choose_diff_lab, text="Difficult", font="Verdana 14 bold", bd=5, fg="#990000")
+        hard_button.pack(pady=10)
+        topic_button = Button(choose_diff_lab, text="Choose a topic", activeforeground="red", font="Verdana 8 bold",)
+        topic_button.pack(pady=10)
 
     def UniqueQuestionScreen(self):
         self.ClearScreen()
+        ImAUniqueLabel = LabelFrame(text="Enter your question's parameters", font="Verdana 14 bold")
+        ImAUniqueLabel.grid(column=2, row=2, padx=10, pady=10, ipadx=40, ipady=30, sticky="nsew")
+        label_q_title = Label(ImAUniqueLabel, text="SMTH")
+        label_q_title.pack()
+        q_title = Entry(ImAUniqueLabel, width=30)
+        q_title.pack()
+        label_a = Label(ImAUniqueLabel, text="SMTH")
+        label_a.pack()
+        q_a = Entry(ImAUniqueLabel, width=30)
+        q_a.pack()
+        label_b = Label(ImAUniqueLabel, text="SMTH")
+        label_b.pack()
+        q_b = Entry(ImAUniqueLabel, width=30)
+        q_b.pack()
+        label_c = Label(ImAUniqueLabel, text="SMTH")
+        label_c.pack()
+        q_c = Entry(ImAUniqueLabel, width=30)
+        q_c.pack()
+        label_d = Label(ImAUniqueLabel, text="SMTH")
+        label_d.pack()
+        q_d = Entry(ImAUniqueLabel, width=30)
+        q_d.pack()
+
+        entry_button = Button(ImAUniqueLabel, text="Send", font="Verdana 12 bold")
+        entry_button.pack(pady=10)
+
 
 
 
