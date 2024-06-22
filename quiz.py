@@ -62,9 +62,9 @@ class Quiz(Tk):
         # Configure the grid within the frame to have a single centered column
         frame_buttons.grid_columnconfigure(0, weight=1)
 
-        play_button = Button(frame_buttons, text="PLAY", font="Verdana 12 bold")
+        play_button = Button(frame_buttons, text="PLAY", font="Verdana 12 bold", command=self.HardnessScreen)
         play_button.grid(column=0, row=0, pady=10)
-        new_button = Button(frame_buttons, text="CREATE", font="Verdana 12 bold")
+        new_button = Button(frame_buttons, text="CREATE", font="Verdana 12 bold", command=self.UniqueQuestionScreen)
         new_button.grid(column=0, row=1, pady=10)
 
         exit_button = Button(text="EXIT", font="Verdana 12 bold", bg="red", command = lambda : self.quit())
@@ -97,8 +97,18 @@ class Quiz(Tk):
         ''', font="Verdana 10")
         descr.pack(padx=10, pady=10)
 
-    def jump_to_difficulty(self):
-        pass
+    def HardnessScreen(self):
+        self.ClearScreen()
+        easy_button = Button()
+        easy_button.pack()
+        medium_button = Button()
+        medium_button.pack()
+        hard_button = Button()
+        hard_button.pack()
+
+    def UniqueQuestionScreen(self):
+        self.ClearScreen()
+
 
 
 if __name__ == '__main__':
