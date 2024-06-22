@@ -1,23 +1,24 @@
 from tkinter import *
 from PIL import Image, ImageTk
-
-
-# def createTxtlabel(root, txt):
-#     return Label(root, text=txt, font="Verdana 12 bold")
-#
-# # def createImglabel(master, loc):
-# #     return Label(master, image=loc)
+import sqlite3
+import os
 
 
 class Quiz(Tk):
     def __init__(self):
         super().__init__()
         self.difficulty = "intermediate"  # for later purpose of diff level
+        self.cqi = 0  # cqi = Current Question Index
+        self.questions = self.get_questions()
+        self.username = "Mario"
         self.title("UnoVia")
         self.iconbitmap("assets/checkbox.ico")
-        self.window_width = 800
-        self.window_height = 600
+        self.window_width = 1000
+        self.window_height = 650
         self.configure(bg='#fff2e6')  # Set the background color
+        self.userscore = 0
+
+
 
         # The grid weights allow columns to expand, so we set them
         for i in range(5):
@@ -33,10 +34,9 @@ class Quiz(Tk):
         self.geometry(f"{self.window_width}x{self.window_height}+{x_cor}+{y_cor}")
         self.HomeScreen()
 
-
     def ClearScreen(self):
         for widget in self.winfo_children():
-            if widget not in (self.home_button, self.help_button):
+            if widget not in (self.home_button, self.help_button, self.user_label, self.logout_button, self.userscore):  # only destroys widgets that are not supposed to be displayed at all times
                 widget.destroy()
         return
 
@@ -57,13 +57,25 @@ class Quiz(Tk):
         self.home_button = Button(self, text="Home", image=self.photo3, command= self.HomeScreen)
         self.home_button.grid(column=3, row=0, sticky="e", pady=10)
 
+        self.user_label = Label(self, text=f"User: {self.username}" if self.username else "User - Not logged in",
+                                font="Arial 8 italic")
+        self.user_label.grid(column=3, row=1, sticky="e")
+
+        self.user_score_label = Label(self, text=f"Score: {self.userscore}" if self.username
+                                else "No login = No score :(",
+                                font="Arial 10 italic bold")
+        self.user_score_label.grid(column=3, row=10, sticky="e")
+
+        self.logout_button = Button(text="Log out", command= self.logout)
+        self.logout_button.grid(column=3, row=2, sticky="ne")
+
         frame_buttons = LabelFrame(self, text="You can start playing or Create a New Question list!", font="Verdana 12 bold", padx=10, pady=10)
         frame_buttons.grid(column=2, row=3, padx=10, pady=10)
 
         # Configure the grid within the frame to have a single centered column
         frame_buttons.grid_columnconfigure(0, weight=1)
 
-        play_button = Button(frame_buttons, text="PLAY", font="Verdana 12 bold", command=self.DiffScreen)
+        play_button = Button(frame_buttons, text="PLAY", font="Verdana 12 bold", command=self.play)
         play_button.grid(column=0, row=0, pady=10)
         new_button = Button(frame_buttons, text="CREATE", font="Verdana 12 bold", command=self.UniqueQuestionScreen)
         new_button.grid(column=0, row=1, pady=10)
@@ -98,12 +110,53 @@ class Quiz(Tk):
         ''', font="Verdana 10")
         descr.pack(padx=10, pady=10)
 
+    def play(self):
+        if len(self.username) > 0:
+            self.DiffScreen()
+        else:
+            self.RegisterScreen()
+
+    def logout(self):
+        if self.username:
+            self.username = ""
+            self.user_label.config(text="User: Not logged in")
+            self.HomeScreen()
+    
+    def RegisterScreen(self):
+        self.ClearScreen()
+        SignFrame = LabelFrame(self, text="Did you already register?", background="grey",
+                               font="Verdana 12 bold")
+        SignFrame.grid(column=2, row=2, padx=10, pady=10, ipadx=40, ipady=30, sticky="nsew")
+        RegisterFrame = LabelFrame(SignFrame, text="Register here!",
+                                   font="Verdana 12 bold")
+        RegisterFrame.pack(pady=10)
+        entry_name = Entry(RegisterFrame)
+        entry_name.pack(pady=5)
+        entry_pwd = Entry(RegisterFrame)
+        entry_pwd.pack(pady=5)
+        entry_button = Button(RegisterFrame, text="Register")
+        entry_button.pack(pady=10)
+
+        LoginFrame = LabelFrame(SignFrame, text="Log in here! (if you have an account)",
+                                font="Verdana 12 bold")
+        LoginFrame.pack(side=BOTTOM, pady=20)
+        login_name = Entry(LoginFrame)
+        login_name.pack(pady=5)
+        login_pwd = Entry(LoginFrame)
+        login_pwd.pack(pady=5)
+        login_button = Button(LoginFrame, text="Log in")
+        login_button.pack(pady=10)
+
+        own_q_button = Button(LoginFrame, text="Play own questions", activeforeground="purple",
+                              font="Verdana 8 italic bold", underline=0)
+        own_q_button.pack(pady=15, side=BOTTOM)
+
     def DiffScreen(self):
         self.ClearScreen()
-        choose_diff_lab = LabelFrame(self, text="Choose difficulty", cursor="exchange", background="lightpink",
+        choose_diff_lab = LabelFrame(self, text="Choose difficulty", cursor="question_arrow", background="lightpink",
                                      font="Verdana 12 bold")
         choose_diff_lab.grid(column=2, row=2, padx=10, pady=10, ipadx=40, ipady=30, sticky="nsew")
-        easy_button = Button(choose_diff_lab, text="Easy", font="Verdana 14 bold", bd=5, fg="#006600")
+        easy_button = Button(choose_diff_lab, text="Easy", font="Verdana 14 bold", bd=5, fg="#006600", command=self.Questions)
         easy_button.pack(pady=20)
         medium_button = Button(choose_diff_lab, text="Intermediate", font="Verdana 14 bold", bd=5, fg="#0066cc")
         medium_button.pack(pady=10)
@@ -111,6 +164,70 @@ class Quiz(Tk):
         hard_button.pack(pady=10)
         topic_button = Button(choose_diff_lab, text="Choose a topic", activeforeground="red", font="Verdana 8 bold",)
         topic_button.pack(pady=10)
+        own_q_button = Button(choose_diff_lab, text="Play own questions", activeforeground="purple", font="Verdana 8 italic", underline=0)
+        own_q_button.pack(pady=15, side=BOTTOM)
+
+    def get_questions(self):
+        db_folder = "db/"
+        db_file = "questions_users.db"
+        db_path = os.path.join(db_folder, db_file)
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        cursor.execute("SELECT title, a, b, c, d FROM PublicQuestions")
+        questions = cursor.fetchall()
+        conn.close()
+        return questions
+
+    def show_question_details(self):
+        if self.cqi < len(self.questions):
+            title, a, b, c, d = self.questions[self.cqi]
+            self.TitleLabel.config(text=title)
+            self.q_btn_list[0].config(text=a)
+            self.q_btn_list[1].config(text=b)
+            self.q_btn_list[2].config(text=c)
+            self.q_btn_list[3].config(text=d)
+
+
+        else:
+            self.finish_quiz()
+
+    def finish_quiz(self):
+        self.TitleLabel.config(text="Quiz Completed!")
+        for btn in self.q_btn_list:
+            btn.pack_forget()
+        self.ScoreLabel.config(text=f"Final Score: {self.userscore}")
+
+    def check_answer_correctness(self):
+        pass
+
+    def next_question_jump(self):
+        if self.cqi < len(self.questions):
+            self.cqi += 1
+            self.Questions()
+        else:
+            self.finish_quiz()
+
+    def Questions(self):
+        self.ClearScreen()
+        QuestionFrame = LabelFrame(self, text="Questions and Answers!")
+        QuestionFrame.grid(column=2, row=2, padx=10, pady=10, ipadx=40, ipady=30, sticky="nsew")
+        qs_label = Label(QuestionFrame, anchor="center", wraplength=500, pady=10, padx=10)
+        qs_label.pack(pady=10)
+
+        self.TitleLabel = Label(QuestionFrame, text=f"title", font="Verdana 12 bold")
+        self.TitleLabel.pack(pady=10)
+        self.q_btn_list = []
+        for i in range(4):
+            q_btn = Button(QuestionFrame, text="QuestionPLaceHolderForButtonETCETCCHECKLENGTH", activebackground="black")
+            q_btn.pack(pady=5)
+            self.q_btn_list.append(q_btn)
+        self.ScoreLabel = Label(QuestionFrame, text=f"Score: ", font="Verdana 12 italic")
+        self.ScoreLabel.pack(pady=20)
+
+        NextButton = Button(QuestionFrame, text="Another One", command=self.next_question_jump)
+        NextButton.pack(pady=10)
+
+        self.show_question_details()
 
     def UniqueQuestionScreen(self):
         self.ClearScreen()
