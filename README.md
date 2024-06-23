@@ -24,12 +24,12 @@ Requirements:
 - start quiz.py manually or in the terminal to start the application
 - the rest of the instructions is on the Instruction Page, marked by the "?" sign at the top left corner
 
-no leaderboard, no own question creation, no topic choice
-there were errors, such as Bad Request error 400 at the login screen. That is the reason, that there is no 
+There were some major errors, such as Bad Request error 400 at the login screen. That is the reason, that there is no 
 login implementation.
 Also, I started using requests package, but later resorted to urllib, even though I had to start again a big part of the
 functionality. There was a circular implementation error that I couldn't figure out ("AttributeError: partially initialized module 'charset-normalizer' has no attribute 'md__mypyc' (most likely due to a circular import)"). I searched on multiple
 websites, like stackoverflow, reddit and some people had a similar problem, but no one's solution worked for me.
+The topic and own question creation screen is also missing, as I have run out of time by the end, but I feel like I could implement it if given more time.
 
 Minor improvements would be to make the code neater. This is the first time I worked with TKinter and I feel
 like there are lots of conventions that I should follow, I had to resort to hard coding most of the stuff.
