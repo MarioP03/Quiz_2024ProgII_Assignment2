@@ -17,6 +17,7 @@ class Quiz(Tk):
         self.window_height = 650
         self.configure(bg='#fff2e6')  # Set the background color
         self.userscore = 0
+        self.correct_answer = ""
 
 
 
@@ -178,17 +179,17 @@ class Quiz(Tk):
         cursor.execute("SELECT title, a, b, c, d FROM PublicQuestions")
         questions = cursor.fetchall()
         conn.close()
-        print(questions)  # TODO: reads the whole db twice!!!
         return questions
 
     def show_question_details(self):
         if self.cqi < len(self.questions):
-            title, a, b, c, d = self.questions[self.cqi]
+            title, a, b, c, d, corr = self.questions[self.cqi]
             self.TitleLabel.config(text=title)
             self.q_btn_list[0].config(text=a)
             self.q_btn_list[1].config(text=b)
             self.q_btn_list[2].config(text=c)
             self.q_btn_list[3].config(text=d)
+            self.correct_answer = corr
         elif self.cqi + 1 == len(self.questions):
             self.finish_quiz()
 
