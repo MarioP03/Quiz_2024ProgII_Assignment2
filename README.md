@@ -12,7 +12,6 @@ Design and major choices:
 - I always defined an attribute of the main class Quiz, when I knew that I would have needed that specific attribute in the future, e.g. self.ScoreLabel
 - I created a virtual environment to store my dependencies, as this makes it easy to follow what I needed
 - I utilized my design knowledge, gained from the Design Lectures this semester and hand-drawn multiple copies of low-fidelity design on paper, horizontally, to explore the range of functionalities, and also vertically to study the depth needed
-- The database already exists, the sqlite_database.py is just the proof of my work
 - I used sqlite3 for the database, it is lightweight, but can manage all the tables that I needed. When a user registers, their information gets recorded in both the Users and the Leaderboard tables 
 
 Requirements:
@@ -23,6 +22,7 @@ Requirements:
 ### Instructions on how to play:
 - activate your virtual environment (".\.venv\Scripts\activate")
 -  type "py manage.py runserver" in terminal to run the server
+- run sqlite_database, so the database gets filled with the additional required tables
 - start quiz.py manually or in the terminal to start the application
 - the rest of the instructions is on the Instruction Page, marked by the "?" sign at the top left corner
 
