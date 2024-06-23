@@ -32,11 +32,12 @@ Also, I started using requests package, but later resorted to urllib, even thoug
 functionality. There was a circular implementation error that I couldn't figure out ("AttributeError: partially initialized module 'charset-normalizer' has no attribute 'md__mypyc' (most likely due to a circular import)"). I searched on multiple
 websites, like stackoverflow, reddit and some people had a similar problem, but no one's solution worked for me.
 The topic and own question creation screen is also missing, as I have run out of time by the end, but I feel like I could implement it if given more time.
+I should have written tests. By the end of the project, i ran out of time and I focused on the main application to function. 
 
 Minor improvements would be to make the code neater. This is the first time I worked with TKinter and I feel
 like there are lots of conventions that I should follow, I had to resort to hard coding most of the stuff.
 There are lots of better ways I could do things better. I should have also created a quiz brain/functionality folder where 
 I store the different methods and requests, so the main file doesn't get overcrowded.
-I should have written more tests and cared more about the design.
+I should have cared more about the design.
 There are only 15 questions so far, but I would make more to make the game more interesting.
 
