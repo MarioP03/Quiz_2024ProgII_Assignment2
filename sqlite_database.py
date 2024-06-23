@@ -2,8 +2,8 @@ import sqlite3
 import os
 
 # Database file path definition
-db_folder = "db"
-db_file = "questions_users.db"
+db_folder = "quiz"
+db_file = "db.sqlite3"
 db_path = os.path.join(db_folder, db_file)
 
 # Creation of db folder, if it doesn't exist
@@ -15,7 +15,7 @@ conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 
 cursor.execute('''CREATE TABLE IF NOT EXISTS PublicQuestions (
-               question_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+               id INTEGER PRIMARY KEY AUTOINCREMENT, 
                 title TEXT, 
                 a TEXT, 
                 b TEXT, 
@@ -26,12 +26,16 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS PublicQuestions (
                 topic TEXT)''')
 
 cursor.execute('''CREATE TABLE IF NOT EXISTS Users
-               (user_id INTEGER PRIMARY KEY AUTOINCREMENT, 
-               user_name TEXT,
-               points INT)''')
+               (id INTEGER PRIMARY KEY AUTOINCREMENT, 
+               username TEXT,
+               password TEXT,
+               points INT,
+               last_login DATETIME,
+               is_active INT,
+               is_admin INT)''')
 
 cursor.execute('''CREATE TABLE IF NOT EXISTS PrivateQuestions 
-               (qestion_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+               (id INTEGER PRIMARY KEY AUTOINCREMENT, 
                 user_id INTEGER, 
                 title TEXT UNIQUE, 
                 ans_a TEXT, 
@@ -39,7 +43,13 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS PrivateQuestions
                 ans_c TEXT, 
                 ans_d TEXT, 
                 correct_answer TEXT,
-                FOREIGN KEY (user_id) REFERENCES Users(user_id))''')
+                FOREIGN KEY (user_id) REFERENCES Users(id))''')
+
+cursor.execute('''CREATE TABLE IF NOT EXISTS Leaderboard
+               (id INTEGER PRIMARY KEY AUTOINCREMENT,
+               username TEXT,
+               points INT,
+               date_achieved DATETIME)''')
 
 publ_questions = [
                    ('Who is the original author of the song "Hound Dog" by Elvis Presley?', 'himself.', 'Frank Sinatra', 'Big Mama Thornton', 'Wolfgang Amadeus Mozart', 'c', 'hard', 'music'),
