@@ -8,6 +8,7 @@ import json
 
 
 class Quiz(Tk):
+    # Class initialization code. Instantiates the following variables and sets the screen of Tkinter
     def __init__(self):
         super().__init__()
         self.difficulty = "intermediate"  # for later purpose of diff level
@@ -27,7 +28,7 @@ class Quiz(Tk):
         self.faillist = ["Oops!", "Next time...", "Almost!"]
         self.pending_choice = ["Give up?", "Think, think, think...", "-_-'"]
 
-        # The grid weights allow columns to expand, so we set them
+        # The grid weights allow columns to expand, so we set them, otherwise, they would expand "as they like"
         for i in range(5):
             self.grid_columnconfigure(i, weight=1)
 
@@ -38,9 +39,11 @@ class Quiz(Tk):
         x_cor = (screen_width - self.window_width) // 2
         y_cor = 20
 
+        # Setting the position and size of the Quiz window
         self.geometry(f"{self.window_width}x{self.window_height}+{x_cor}+{y_cor}")
         self.HomeScreen()
 
+    # This method clears the screen of any widgets, so they don't clutter together when switching screens
     def ClearScreen(self):
         for widget in self.winfo_children():
             if widget not in (self.home_button, self.help_button, self.user_label, self.logout_button,
@@ -48,6 +51,8 @@ class Quiz(Tk):
                 widget.destroy()
         return
 
+    # Home screen of Tkinter. This is the basic starting screen, you can jump back to and always start from.
+    # Contains play button, create button, the image, title. Also contains some labels, such as username and user score.
     def HomeScreen(self):
         self.ClearScreen()
         welcome_label = Label(self, text="UnoVia", bg="#fff2e6", font="Verdana 12 bold")
@@ -92,6 +97,7 @@ class Quiz(Tk):
         exit_button = Button(text="EXIT", font="Verdana 12 bold", bg="red", command=lambda: self.quit())
         exit_button.grid(column=2, row=6, pady=20)
 
+    # This method creates the Help screen, which shows unstructions and a little story.
     def HelpScreen(self):
         self.ClearScreen()
         expl = LabelFrame(self, padx=10, pady=10, text="Description", font="Verdana 12 bold")
@@ -123,15 +129,20 @@ class Quiz(Tk):
         something cool. I feel proud.
         
         Have fun :)
+        -By: Mario Palagyi-
         ''', font="Verdana 10")
         descr.pack(padx=10, pady=10)
 
+    # Method that either jumps to Diffscreen or Registerscreen, based on login status. Used as a command at the play
+    # button.
     def play(self):
         if len(self.username) > 0:
             self.DiffScreen()
         else:
             self.RegisterScreen()
 
+    # Logout method that is used at the logout button. Logs the user out and jumps to the homescreen, setting the score
+    # cqi (current question index) and username to default.
     def logout(self):
         if self.username:
             self.username = ""
@@ -140,6 +151,8 @@ class Quiz(Tk):
             self.cqi = 0
             self.HomeScreen()
 
+    # Registerscreen method that is used at the play button. If we are not logged in, it jumps to this page.
+    # Here we must register to start our game
     def RegisterScreen(self):
         self.ClearScreen()
         SignFrame = LabelFrame(self, text="Did you already register?", background="grey",
@@ -165,6 +178,8 @@ class Quiz(Tk):
         # login_button = Button(LoginFrame, text="Log in", command = lambda : self.login_user(username = entry_name.get(), password = entry_pwd.get()))
         # login_button.pack(pady=10)
 
+    # The unfinished login_user method that should log the user in, matching usernames as unique values. It is
+    # unfinished due to a 400 Bad Request message not getting fixed by me.
     def login_user(self, username, password):
         data = {'username': username, 'password': password}
         encoded_data = urllib.parse.urlencode(data).encode('utf-8')
@@ -181,6 +196,8 @@ class Quiz(Tk):
         except urllib.error.URLError as e:
             print('URLError: ', e)
 
+    # Register function, that is used at the register button. After logging in with credentials, the user is
+    # automatically logged in.
     def register_user(self, username, password1, password2):
         data = {'username': username, 'password1': password1, 'password2': password2, 'points': 0}
         encoded_data = urllib.parse.urlencode(data).encode('utf-8')
@@ -197,6 +214,8 @@ class Quiz(Tk):
         except urllib.error.URLError as e:
             print('URLError: ', e)
 
+    # get_userid method, that didnt get implemented. Sends a query to the database, that selects user_id from Users
+    # table and matches the values by username.
     def get_userid(self):
         db_folder = "quiz/"
         db_file = "db.sqlite3"
@@ -208,6 +227,8 @@ class Quiz(Tk):
         conn.close()
         return userid
 
+    # get_username method, that didnt get implemented. Uses urllib library to send a post request, to the server.
+    # Returns the username as data
     def get_username(self):
         data = {'username':self.username}
         encoded_data = urllib.parse.urlencode(data).encode('utf-8')
@@ -224,6 +245,8 @@ class Quiz(Tk):
         except urllib.error.URLError as e:
             print('URLError: ', e)
 
+    # get_userscore method, that didnt get implemented. Sends a query to the database that matches values by  the
+    # username. Returns the points attribute from the database.
     def get_userscore(self):
         db_folder = "quiz/"
         db_file = "db.sqlite3"
@@ -235,6 +258,8 @@ class Quiz(Tk):
         conn.close()
         return userpoints
 
+    # Difficulty screen that is implemented as the command of the play button, once the user is logged in. It jumps to
+    # this screen where the users can choose a difficulty level, and their game automatically begins
     def DiffScreen(self):
         self.ClearScreen()
         choose_diff_lab = LabelFrame(self, text="Choose difficulty", cursor="question_arrow", background="lightpink",
@@ -258,9 +283,13 @@ class Quiz(Tk):
         #                       font="Verdana 8 italic", underline=0)
         # own_q_button.pack(pady=15, side=BOTTOM)
 
+    # Method that geets activated on the "All" button's click. Sets the questions attribute of the main class to all
+    # existing questions.
     def all_click(self):
         self.questions = self.get_all_questions()
 
+    # Method that gets activated on the "All" button's click. Sends the query that gets every record from the
+    # PublicQuestions table in the database.
     def get_all_questions(self):
         db_folder = "quiz/"
         db_file = "db.sqlite3"
@@ -272,17 +301,26 @@ class Quiz(Tk):
         conn.close()
         return questions
 
+    # Method that gets activated on the "Easy" button's click. Sets the questions attribute of the main class to only
+    # easy questions.
     def easy_click(self):
         self.questions = self.get_easy_questions()
         self.difficulty = "easy"
+
+    # Method that gets activated on the "Intermediate" button's click. Sets the questions attribute of the main class
+    # to only medium questions.
     def inter_click(self):
         self.questions = self.get_inter_questions()
         self.difficulty = "medium"
+
+    # Method that gets activated on the "Hard" button's click. Sets the questions attribute of the main class
+    # to only hard questions.
     def hard_click(self):
         self.questions = self.get_hard_questions()
         self.difficulty = "hard"
 
-
+    # Method that gets activated on the "Easy" button's click. Sends the query that gets only the easy questions from
+    # PublicQuestions table in the database.
     def get_easy_questions(self):
         db_folder = "quiz/"
         db_file = "db.sqlite3"
@@ -294,6 +332,8 @@ class Quiz(Tk):
         conn.close()
         return questions
 
+    # Method that gets activated on the "Easy" button's click. Sends the query that gets only the medium questions from
+    #  the PublicQuestions table in the database.
     def get_inter_questions(self):
         db_folder = "quiz/"
         db_file = "db.sqlite3"
@@ -305,6 +345,8 @@ class Quiz(Tk):
         conn.close()
         return questions
 
+    # Method that gets activated on the "Easy" button's click. Sends the query that gets only the hard questions from
+    # PublicQuestions table in the database.
     def get_hard_questions(self):
         db_folder = "quiz/"
         db_file = "db.sqlite3"
@@ -316,6 +358,9 @@ class Quiz(Tk):
         conn.close()
         return questions
 
+    # method that configures the A, B, C and D buttons pn the questions screen along with the title. This configures
+    # all the buttons and the title on the according questions pages. Also records the correct answer in the main
+    # class's attribute. Sets current question index by +1
     def show_question_details(self):
         if self.cqi < len(self.questions):
             title, a, b, c, d, corr, diff, topic = self.questions[self.cqi]
@@ -328,6 +373,9 @@ class Quiz(Tk):
         elif self.cqi + 1 == len(self.questions):
             self.finish_quiz()
 
+    # The method that instantiates when the qiz finishes. The Next button and the check label pack are forgotten, so
+    # they disappear. The title also gets modified and the buttons also disappear, we get a score, a message, based on
+    # our score and the main user score also gets modified.
     def finish_quiz(self):
         self.NextButton.pack_forget()
         self.CheckQuestionLabel.pack_forget()
@@ -342,8 +390,9 @@ class Quiz(Tk):
             self.ScoreLabel.config(text=f"Final Score: {self.userscore}... WOW O_O, you are well-informed")
         self.user_score_label.config(text=f"Score: {self.userscore}")
         self.cqi = 0
-        # TODO: add userscore to user details in db
 
+    # This is the method that checks the answer correctness and sens either a gratulating or sad message, and forgets
+    # the button packings. Also adjusts current score.
     def check_answer_correctness(self, choice):
         
         if choice == self.correct_answer:
@@ -357,10 +406,10 @@ class Quiz(Tk):
             for btn in [self.A_btn, self.B_btn, self.C_btn, self.D_btn]:
                 btn.pack_forget()
             self.CheckQuestionLabel.configure(text=fail_text, fg="red")
-            # TODO: only deduce a point in hard ;self.userscore -= 1
             self.ScoreLabel.config(text=f"Score: {self.userscore}")
 
-
+    # Method that gets activated on the next button. Simply jumps to the next button and adds +1 to the current
+    # question index. If there are more questions, it jumps, if not, skips to the final screen.
     def next_question_jump(self):
         self.AllQuestions()
         if self.cqi < len(self.questions) - 1:
@@ -369,6 +418,8 @@ class Quiz(Tk):
         else:
             self.finish_quiz()
 
+    # Method that display the buttons and title label that get configured later. Also contains a Label Frame which
+    # contains all other widgets.
     def AllQuestions(self):
         self.ClearScreen()
         QuestionFrame = LabelFrame(self, text="Questions and Answers!")
@@ -402,6 +453,8 @@ class Quiz(Tk):
 
         self.show_question_details()
 
+    # UniqueQuestionScreen should be able to send the custom questions to the database, but didn't get correctly
+    # implemented so far. Contains a labelframe, a title label and 4 other question option labels.
     def UniqueQuestionScreen(self):
         self.ClearScreen()
         ImAUniqueLabel = LabelFrame(text="Enter your question's parameters", font="Verdana 14 bold")

@@ -38,4 +38,5 @@ like there are lots of conventions that I should follow, I had to resort to hard
 There are lots of better ways I could do things better. I should have also created a quiz brain/functionality folder where 
 I store the different methods and requests, so the main file doesn't get overcrowded.
 I should have written more tests and cared more about the design.
+There are only 15 questions so far, but I would make more to make the game more interesting.
 
