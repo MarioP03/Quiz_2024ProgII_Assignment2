@@ -12,8 +12,11 @@ os.makedirs(db_folder, exist_ok=True)
 # Connection to sqlite database, in case it doesn't exist, it creates it also
 conn = sqlite3.connect(db_path)
 
+# assign cursor to variable
 cursor = conn.cursor()
 
+# Executes the query that creates the table PublicQuestions, with attributes id, title, a, b, c, d (options),
+# the correct answer (single letter), the question difficulty and topic
 cursor.execute('''CREATE TABLE IF NOT EXISTS PublicQuestions (
                id INTEGER PRIMARY KEY AUTOINCREMENT, 
                 title TEXT, 
@@ -25,6 +28,8 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS PublicQuestions (
                 diff TEXT, 
                 topic TEXT)''')
 
+# Executes the query that creates the Users table, with attributes id, username, password, points, last_login, is_active
+# is_admin. The last 3 attributes are only needed for Django to properly function
 cursor.execute('''CREATE TABLE IF NOT EXISTS Users
                (id INTEGER PRIMARY KEY AUTOINCREMENT, 
                username TEXT,
@@ -34,6 +39,9 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS Users
                is_active INT,
                is_admin INT)''')
 
+# Executes the query that creates the PrivateQuestions table, with attributes id, user_id
+# (which is a foreign key from Users table), the question title, ans_a, ans_b, ans_c, ans_d (answer options),
+# correct_answer, which is a single letter and
 cursor.execute('''CREATE TABLE IF NOT EXISTS PrivateQuestions 
                (id INTEGER PRIMARY KEY AUTOINCREMENT, 
                 user_id INTEGER, 
@@ -45,12 +53,17 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS PrivateQuestions
                 correct_answer TEXT,
                 FOREIGN KEY (user_id) REFERENCES Users(id))''')
 
+# Executes the query that creates the Leaderboard table, with attributes id, username, points (user score) and the date
+# that it was achieved. The date_achieved attribute is also something needed for django functionality, otherwise
+# I received an error.
 cursor.execute('''CREATE TABLE IF NOT EXISTS Leaderboard
                (id INTEGER PRIMARY KEY AUTOINCREMENT,
                username TEXT,
                points INT,
                date_achieved DATETIME)''')
 
+# Questions: their titles, the 4 options, the correct answer, the appropriate difficulty, and their topic
+# in a list of tuples, assigned to a variable
 publ_questions = [
                    ('Who is the original author of the song "Hound Dog" by Elvis Presley?', 'himself.', 'Frank Sinatra', 'Big Mama Thornton', 'Wolfgang Amadeus Mozart', 'c', 'hard', 'music'),
                     ('What is the first rule of ... what club?', 'You dont talk about the Fight Club + Fight Club :)', 'the Avengers', 'Always bring your own book - Book Club', 'What rule? What club?', 'd', 'hard', 'movies'),
@@ -69,6 +82,8 @@ publ_questions = [
                     ('Which of the mentioned singers also act in the movie "A Star is Born" (2018)?', 'Lady Gaga', 'Lana Del Rey', 'Judy Garland', 'Rihanna', 'a', 'easy', 'movies')
                    ]
 
+# The query that Inserts the questions into PublicQuestions table. This query makes it possible to insert
+# multiple values at the same time, using the publ_questions variable
 cursor.executemany('''INSERT INTO PublicQuestions (title, a, b, c, d, correct_answer, diff, topic) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                    ''', publ_questions)

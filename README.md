@@ -7,10 +7,12 @@ This is the repository where I will be working on the #2 assignment regarding Pr
 Design and major choices:
 - I used TKinter for the quiz app and had to import PIL for the images
 - the server communication is made possible by Django, I utilized the schemas studied during our Programming class on Django and also tweaked it some by myself
+- For the database, I had to copy a django database schema, that made it possible to function, and I imported the tables that I need: Users, PublicQuestions, PrivateQuestions
 - I put everything in one file, as this was the most straight-forward for me
 - I always defined an attribute of the main class Quiz, when I knew that I would have needed that specific attribute in the future, e.g. self.ScoreLabel
 - I created a virtual environment to store my dependencies, as this makes it easy to follow what I needed
 - I utilized my design knowledge, gained from the Design Lectures this semester and hand-drawn multiple copies of low-fidelity design on paper, horizontally, to explore the range of functionalities, and also vertically to study the depth needed
+- The database already exists, the sqlite_database.py is just the proof of my work
 - I used sqlite3 for the database, it is lightweight, but can manage all the tables that I needed. When a user registers, their information gets recorded in both the Users and the Leaderboard tables 
 
 Requirements:
