@@ -33,7 +33,7 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS Users
 cursor.execute('''CREATE TABLE IF NOT EXISTS PrivateQuestions 
                (qestion_id INTEGER PRIMARY KEY AUTOINCREMENT, 
                 user_id INTEGER, 
-                title TEXT, 
+                title TEXT UNIQUE, 
                 ans_a TEXT, 
                 ans_b TEXT, 
                 ans_c TEXT, 
@@ -41,9 +41,7 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS PrivateQuestions
                 correct_answer TEXT,
                 FOREIGN KEY (user_id) REFERENCES Users(user_id))''')
 
-cursor.executemany('''INSERT INTO PublicQuestions (title, a, b, c, d, correct_answer, diff, topic) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                   ''', [
+publ_questions = [
                    ('Who is the original author of the song "Hound Dog" by Elvis Presley?', 'himself.', 'Frank Sinatra', 'Big Mama Thornton', 'Wolfgang Amadeus Mozart', 'c', 'hard', 'music'),
                     ('What is the first rule of ... what club?', 'You dont talk about the Fight Club + Fight Club :)', 'the Avengers', 'Always bring your own book - Book Club', 'What rule? What club?', 'd', 'hard', 'movies'),
                     ('What did the Avengers eat at the end of the first movie??', 'döner', 'shawarma', 'the died.', 'langos', 'b', 'hard', 'movies'),
@@ -59,7 +57,11 @@ cursor.executemany('''INSERT INTO PublicQuestions (title, a, b, c, d, correct_an
                     ('Which rapper wrote the song "Candy Shop"?', '50 Cent', 'Chris Brown', 'Dr. Dre', 'Snoop Dogg', 'a', 'easy', 'music'),
                     ('Who wrote the diss track, titled "Rap Devil" about Eminem in 2018?', 'The Migos', 'NF', 'Machine Gun Kelly', 'Logic', 'c', 'medium', 'music'),
                     ('Which of the mentioned singers also act in the movie "A Star is Born" (2018)?', 'Lady Gaga', 'Lana Del Rey', 'Judy Garland', 'Rihanna', 'a', 'easy', 'movies')
-                   ])
+                   ]
+
+cursor.executemany('''INSERT INTO PublicQuestions (title, a, b, c, d, correct_answer, diff, topic) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                   ''', publ_questions)
 
 conn.commit()
 conn.close()
