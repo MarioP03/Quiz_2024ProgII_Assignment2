@@ -1,6 +1,9 @@
 import os
 import sys
 
+# Code that sets entrypoint in a django project. Running this file (executing from command line) starts the server
+# on localhost, or otherwise prints an error message that lets the user know, they have no Django installed,
+# or venv activated.
 def main():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'quiz.settings')
     try:
